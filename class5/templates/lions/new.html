@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% comment %}
+기본 PBL 코드
+- 아기사자 이름을 입력받는 Form 구현
+- POST 요청으로 서버에 데이터 전달
+- 입력값 검증 없이 바로 등록 처리
+{% endcomment %}
+
+{% comment %}
+보너스 PBL 코드
+- 입력값이 비어 있을 경우 등록하지 않음
+- 에러 메시지를 화면에 출력
+- Template if 문법 사용
+{% endcomment %}
+
+<h1>아기사자 등록</h1>
+
+{% if error_message %}
+  <p style="color: red;">{{ error_message }}</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="아기사자 이름">
+  <button type="submit">등록</button>
+</form>
+
+<a href="{% url 'lion_list' %}">목록으로</a>
+
+{% endblock %}

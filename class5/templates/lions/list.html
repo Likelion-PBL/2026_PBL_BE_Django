@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% comment %}
+기본 PBL 코드
+- 목록 출력
+- for / empty 사용
+{% endcomment %}
+
+<h1>아기사자 목록</h1>
+
+<ul>
+  {% for lion in lions %}
+    <li>{{ lion }}</li>
+  {% empty %}
+    <li>아직 등록된 아기사자가 없습니다.</li>
+  {% endfor %}
+</ul>
+
+{% comment %}
+보너스 PBL 코드
+- URL name
+- base.html 상속
+{% endcomment %}
+
+<a href="{% url 'lion_create' %}">아기사자 등록</a>
+
+{% endblock %}
