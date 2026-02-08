@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>아기사자 상세</h1>
+
+<ul>
+  <li>이름: {{ lion.name }}</li>
+  <li>트랙: {{ lion.track }}</li>
+</ul>
+
+<hr>
+
+<a href="{% url 'lion_edit' lion.id %}">수정</a>
+
+<form method="post"
+      action="{% url 'lion_delete' lion.id %}"
+      style="display:inline;"
+      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+  {% csrf_token %}
+  <button type="submit">삭제</button>
+</form>
+
+<hr>
+
+<a href="{% url 'lion_list' %}">목록으로</a>
+
+{% endblock %}
