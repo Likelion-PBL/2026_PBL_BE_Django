@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>아기사자 수정</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div>
+    <label>이름</label><br>
+    <input type="text" name="name" value="{{ lion.name }}">
+  </div>
+
+  <div>
+    <label>트랙</label><br>
+    <input type="text" name="track" value="{{ lion.track }}">
+  </div>
+
+  <br>
+
+  <button type="submit">수정 완료</button>
+</form>
+
+<hr>
+
+<a href="{% url 'lion_detail' lion.id %}">취소</a>
+
+{% endblock %}
