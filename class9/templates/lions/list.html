@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>아기사자 목록</h1>
+
+<p>총 {{ count }}명의 아기사자가 있습니다.</p>
+
+{# 검색 폼 #}
+<form method="get" style="margin-bottom: 16px;">
+  <input
+    type="text"
+    name="keyword"
+    placeholder="이름 또는 트랙 검색"
+    value="{{ keyword }}"
+  >
+
+  <select name="track">
+    <option value="">전체 트랙</option>
+    <option value="Django" {% if track == "Django" %}selected{% endif %}>Django</option>
+    <option value="SpringBoot" {% if track == "SpringBoot" %}selected{% endif %}>SpringBoot</option>
+    <option value="Frontend" {% if track == "Frontend" %}selected{% endif %}>Frontend</option>
+  </select>
+
+  <button type="submit">검색</button>
+</form>
+
+<ul>
+  {% for lion in lions %}
+    <li>
+      <a href="{% url 'lion_detail' lion.id %}">
+        {{ lion.name }} ({{ lion.track }})
+      </a>
+      <br>
+      <small>등록일: {{ lion.created_at|date:"Y-m-d H:i" }}</small>
+    </li>
+  {% empty %}
+    {% if keyword or track %}
+      <li>검색 결과가 없습니다.</li>
+    {% else %}
+      <li>아직 등록된 아기사자가 없습니다.</li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<hr>
+
+<a href="{% url 'lion_create' %}">아기사자 등록</a>
+
+{% endblock %}
