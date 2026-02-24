@@ -3,13 +3,59 @@
 <head>
   <meta charset="utf-8">
   <title>아기사자 관리</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    header {
+      margin-bottom: 20px;
+    }
+
+    nav a {
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav {
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .pagination {
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      margin-right: 10px;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <h2>🦁 아기사자 관리 서비스</h2>
-  <hr>
 </header>
+
+<nav>
+  <a href="{% url 'lion_list' %}">목록</a>
+  <a href="{% url 'lion_create' %}">아기사자 등록</a>
+</nav>
+
+<hr>
 
 {% block content %}
 {% endblock %}
