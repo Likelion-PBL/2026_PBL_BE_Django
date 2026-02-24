@@ -1,7 +1,9 @@
 from .models import Lion, Task
-from django.db import transaction
+from .services import create_lion_with_default_tasks
+from .services import toggle_task
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
+from django.views.generic import ListView
 
 def lion_list(request):
     keyword = request.GET.get("keyword", "")
@@ -27,7 +29,39 @@ def lion_list(request):
 
     return render(request, "lions/list.html", context)
 
-@transaction.atomic
+class LionListView(ListView):
+    model = Lion
+    template_name = "lions/list.html"
+    context_object_name = "lions"
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        keyword = self.request.GET.get("keyword", "")
+        track = self.request.GET.get("track", "")
+
+        if keyword:
+            queryset = queryset.filter(
+                Q(name__icontains=keyword) |
+                Q(track__icontains=keyword)
+            )
+
+        if track:
+            queryset = queryset.filter(track=track)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["keyword"] = self.request.GET.get("keyword", "")
+        context["track"] = self.request.GET.get("track", "")
+
+        # 이미 계산된 paginator 사용
+        context["count"] = context["paginator"].count
+
+        return context
+
 def lion_create(request):
     if request.method != "POST":
         return render(request, "lions/new.html")
@@ -40,12 +74,7 @@ def lion_create(request):
             "error_message": "이름과 트랙을 입력하세요."
         })
 
-    lion = Lion.objects.create(name=name, track=track)
-
-    default_tasks = ["기초 과제", "중급 과제", "심화 과제"]
-
-    for title in default_tasks:
-        Task.objects.create(lion=lion, title=title)
+    create_lion_with_default_tasks(name, track)
 
     return redirect("lion_list")
 
@@ -104,7 +133,6 @@ def task_toggle(request, lion_id, task_id):
         return redirect("lion_detail", lion_id=lion_id)
 
     task = get_object_or_404(Task, id=task_id, lion_id=lion_id)
-    task.completed = not task.completed
-    task.save(update_fields=["completed"])
+    toggle_task(task)
 
     return redirect("lion_detail", lion_id=lion_id)
