@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>아기사자 상세</h1>
+
+<ul>
+  <li>이름: {{ lion.name }}</li>
+  <li>트랙: {{ lion.track }}</li>
+</ul>
+
+<hr>
+<h2>성장 과제</h2>
+<p>표시 중인 과제 수: {{ task_count }}</p>
+
+<a href="?">전체</a> |
+<a href="?status=todo"
+   {% if status == "todo" %}style="font-weight:bold;"{% endif %}>
+   미완료
+</a> |
+<a href="?status=done"
+   {% if status == "done" %}style="font-weight:bold;"{% endif %}>
+   완료
+</a>
+
+<hr>
+<ul>
+  {% for task in tasks %}
+    <li>
+      {{ task.title }}
+      {% if task.completed %}(완료){% else %}(미완료){% endif %}
+
+      <form method="post"
+            action="{% url 'task_toggle' lion.id task.id %}"
+            style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">
+          {% if task.completed %}완료취소{% else %}완료{% endif %}
+        </button>
+      </form>
+    </li>
+  {% empty %}
+    <li>등록된 과제가 없습니다.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'lion_edit' lion.id %}">수정</a>
+
+<form method="post"
+      action="{% url 'lion_delete' lion.id %}"
+      style="display:inline;"
+      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+  {% csrf_token %}
+  <button type="submit">삭제</button>
+</form>
+
+<hr>
+
+
+<a href="{% url 'lion_list' %}">목록으로</a>
+
+{% endblock %}
