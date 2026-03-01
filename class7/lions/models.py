@@ -1,15 +1,6 @@
 from django.db import models
 
-# 기본 PBL 코드
-# class Lion(models.Model):
-#     name = models.CharField(max_length=50)
-#     track = models.CharField(max_length=50)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     def __str__(self):
-#         return f"{self.name} ({self.track})"
 
-# 보너스
 class Lion(models.Model):
     TRACK_CHOICES = [
         ('Django', 'Django'),
@@ -17,9 +8,19 @@ class Lion(models.Model):
         ('Frontend', 'Frontend'),
     ]
 
-    name = models.CharField(max_length=20)
-    track = models.CharField(max_length=20, choices=TRACK_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=100, verbose_name='이름')
+    track = models.CharField(
+        max_length=50,
+        choices=TRACK_CHOICES,
+        blank=True,
+        verbose_name='트랙',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록일')
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = '아기사자'
+        verbose_name_plural = '아기사자 목록'
 
     def __str__(self):
-        return f'{self.name} ({self.track})'
+        return f"{self.name} ({self.track})"
