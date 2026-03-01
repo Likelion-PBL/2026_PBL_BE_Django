@@ -9,8 +9,80 @@
   <li>트랙: {{ lion.track }}</li>
 </ul>
 
+<a href="{% url 'lion_edit' lion.id %}">수정</a>
+
+<form method="post"
+      action="{% url 'lion_delete' lion.id %}"
+      style="display:inline;"
+      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+  {% csrf_token %}
+  <button type="submit">삭제</button>
+</form>
+
 <hr>
-<h2>성장 과제</h2>
+
+<!-- ────────────────────────────────────────
+     1:1  프로필
+     lion.profile 로 역방향 접근 (related_name='profile')
+──────────────────────────────────────── -->
+<h2>프로필 (1:1)</h2>
+{% if profile %}
+  <ul>
+    <li>GitHub: {{ profile.github_url|default:"미입력" }}</li>
+    <li>자기소개: {{ profile.bio|default:"미입력" }}</li>
+  </ul>
+{% else %}
+  <p>프로필이 없습니다.</p>
+{% endif %}
+<a href="{% url 'profile_edit' lion.id %}">프로필 수정</a>
+
+<hr>
+
+<!-- ────────────────────────────────────────
+     N:M  태그
+     lion.tags.all() 로 역방향 접근 (related_name='tags')
+     tag.lions.all() 로 반대 방향도 조회 가능 (양방향)
+──────────────────────────────────────── -->
+<h2>관심 기술 태그 (N:M)</h2>
+<p>
+  현재 태그:
+  {% for tag in tags %}
+    <strong>{{ tag.name }}</strong>
+    <form method="post"
+          action="{% url 'tag_toggle' lion.id tag.id %}"
+          style="display:inline;">
+      {% csrf_token %}
+      <button type="submit">제거</button>
+    </form>
+  {% empty %}
+    없음
+  {% endfor %}
+</p>
+
+<p>태그 추가:</p>
+<ul>
+  {% for tag in all_tags %}
+    {% if tag not in tags %}
+      <li>
+        {{ tag.name }}
+        <form method="post"
+              action="{% url 'tag_toggle' lion.id tag.id %}"
+              style="display:inline;">
+          {% csrf_token %}
+          <button type="submit">추가</button>
+        </form>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<hr>
+
+<!-- ────────────────────────────────────────
+     1:N  과제
+     lion.tasks.all() 로 역방향 접근 (related_name='tasks')
+──────────────────────────────────────── -->
+<h2>성장 과제 (1:N)</h2>
 <p>표시 중인 과제 수: {{ task_count }}</p>
 
 <a href="?">전체</a> |
@@ -23,7 +95,6 @@
    완료
 </a>
 
-<hr>
 <ul>
   {% for task in tasks %}
     <li>
@@ -44,18 +115,7 @@
   {% endfor %}
 </ul>
 
-<a href="{% url 'lion_edit' lion.id %}">수정</a>
-
-<form method="post"
-      action="{% url 'lion_delete' lion.id %}"
-      style="display:inline;"
-      onsubmit="return confirm('정말 삭제하시겠습니까?');">
-  {% csrf_token %}
-  <button type="submit">삭제</button>
-</form>
-
 <hr>
-
 
 <a href="{% url 'lion_list' %}">목록으로</a>
 
